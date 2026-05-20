@@ -560,8 +560,187 @@
       to { transform: scaleX(1); }
     }
 
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(5,5,7,0.92);
+      z-index: 200;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 4rem 1.5rem 2rem;
+      overflow-y: auto;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s;
+      backdrop-filter: blur(6px);
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--muted);
+      max-width: 820px;
+      width: 100%;
+      padding: 3.5rem;
+      position: relative;
+      transform: translateY(30px);
+      transition: transform 0.4s;
+    }
+    .modal-overlay.open .modal { transform: translateY(0); }
+    .modal-close {
+      position: absolute;
+      top: 1.5rem; right: 1.5rem;
+      background: none;
+      border: 1px solid var(--muted);
+      color: var(--text-dim);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      padding: 0.4rem 0.8rem;
+      cursor: none;
+      transition: color 0.3s, border-color 0.3s;
+    }
+    .modal-close:hover { color: var(--accent); border-color: var(--accent); }
+    .modal-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+    .modal-title {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 300;
+      margin-bottom: 2.5rem;
+      line-height: 1.1;
+    }
+    .modal-title em { font-style: italic; color: var(--accent); }
+    .modal-toc {
+      background: var(--surface2);
+      border-left: 2px solid var(--accent);
+      padding: 1.5rem 2rem;
+      margin-bottom: 2.5rem;
+    }
+    .modal-toc-title {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 1rem;
+    }
+    .modal-toc ol {
+      padding-left: 1.2rem;
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      line-height: 2;
+    }
+    .modal-toc ol li a {
+      color: var(--text-dim);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .modal-toc ol li a:hover { color: var(--accent); }
+    .modal-section {
+      margin-bottom: 2.5rem;
+      padding-bottom: 2.5rem;
+      border-bottom: 1px solid rgba(58,58,72,0.5);
+    }
+    .modal-section:last-child { border-bottom: none; }
+    .modal-section-num {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.3em;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+    .modal-section h3 {
+      font-size: 1.4rem;
+      font-weight: 400;
+      margin-bottom: 1rem;
+    }
+    .modal-section p {
+      font-size: 1rem;
+      color: var(--text-dim);
+      line-height: 1.85;
+      margin-bottom: 0.8rem;
+    }
+    .modal-section ul, .modal-section ol {
+      padding-left: 1.4rem;
+      color: var(--text-dim);
+      font-size: 0.95rem;
+      line-height: 2;
+    }
+    .modal-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      margin-top: 1rem;
+      font-family: 'DM Mono', monospace;
+    }
+    .modal-table th {
+      background: var(--surface2);
+      color: var(--accent);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 0.7rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--muted);
+    }
+    .modal-table td {
+      padding: 0.65rem 1rem;
+      border-bottom: 1px solid rgba(58,58,72,0.4);
+      color: var(--text-dim);
+      font-size: 0.78rem;
+    }
+    .modal-table tr:hover td { background: rgba(200,169,126,0.04); color: var(--text); }
+    .sat-dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      margin-right: 4px;
+      vertical-align: middle;
+    }
+    .modal-q-block {
+      background: var(--surface2);
+      border-left: 1px solid var(--muted);
+      padding: 1rem 1.5rem;
+      margin-bottom: 0.8rem;
+    }
+    .modal-q-block .q-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.4rem;
+    }
+    .modal-q-block .q-text {
+      font-size: 0.95rem;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+    .modal-q-block .q-opts {
+      font-size: 0.82rem;
+      color: var(--text-dim);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+    .modal-q-block .q-opt {
+      border: 1px solid var(--muted);
+      padding: 0.15rem 0.5rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+    }
+
     /* Responsive */
     @media (max-width: 768px) {
+      .modal { padding: 2rem 1.2rem; }
+    
       nav { padding: 1.2rem 1.5rem; }
       .nav-links { gap: 1.5rem; }
       #hero { padding: 8rem 1.5rem 4rem; }
@@ -673,8 +852,38 @@
     <h2 class="section-title">Selected<em>works.</em></h2>
     <div class="projects-grid">
 
+      <div class="project-card featured-card" onclick="openModal()" style="border-color: rgba(200,169,126,0.4); grid-column: 1 / -1;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem;">
+          <div style="flex:1; min-width:260px;">
+            <div class="project-num">001 — Featured Research</div>
+            <div class="project-title" style="font-size:clamp(1.6rem,3.5vw,2.4rem);">Concert Ticket <em style="font-style:italic; color:var(--accent);">Analyzer</em></div>
+            <p class="project-desc" style="max-width:600px;">A comprehensive audience research study analyzing concert ticket purchasing behavior, price sensitivity, and satisfaction drivers among teenagers and young adults — connecting performance culture with data-driven insights.</p>
+            <div class="project-tags">
+              <span class="tag">Audience Research</span>
+              <span class="tag">Survey Design</span>
+              <span class="tag">Data Analysis</span>
+              <span class="tag">Performance Studies</span>
+              <span class="tag">Fan Culture</span>
+            </div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:1rem; align-items:flex-end; justify-content:space-between; min-height:120px;">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; text-align:center;">
+              <div style="border:1px solid rgba(200,169,126,0.25); padding:0.8rem 1.2rem;">
+                <div style="font-family:'DM Mono',monospace; font-size:1.4rem; color:var(--accent);">7</div>
+                <div style="font-family:'DM Mono',monospace; font-size:0.55rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--text-dim); margin-top:0.2rem;">Survey Qs</div>
+              </div>
+              <div style="border:1px solid rgba(200,169,126,0.25); padding:0.8rem 1.2rem;">
+                <div style="font-family:'DM Mono',monospace; font-size:1.4rem; color:var(--accent);">5</div>
+                <div style="font-family:'DM Mono',monospace; font-size:0.55rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--text-dim); margin-top:0.2rem;">Participants</div>
+              </div>
+            </div>
+            <button onclick="openModal()" style="background:none; border:1px solid var(--accent); color:var(--accent); font-family:'DM Mono',monospace; font-size:0.65rem; letter-spacing:0.2em; text-transform:uppercase; padding:0.7rem 1.4rem; cursor:none; transition:background 0.3s, color 0.3s;" onmouseover="this.style.background='var(--accent)'; this.style.color='var(--bg)'" onmouseout="this.style.background='none'; this.style.color='var(--accent)'">View Full Research ↗</button>
+          </div>
+        </div>
+      </div>
+
       <div class="project-card">
-        <div class="project-num">001</div>
+        <div class="project-num">002</div>
         <div class="project-title">Art Gallery Dashboard</div>
         <p class="project-desc">An interactive visualization dashboard designed to analyze visitor engagement, artwork reception, and the emotional resonance of exhibitions — bridging art and data.</p>
         <div class="project-tags">
@@ -686,7 +895,7 @@
       </div>
 
       <div class="project-card">
-        <div class="project-num">002</div>
+        <div class="project-num">003</div>
         <div class="project-title">Performance Satisfaction Study</div>
         <p class="project-desc">A research project examining the variables that influence audience satisfaction in traditional Korean dance performances, combining qualitative surveys with observational methods.</p>
         <div class="project-tags">
@@ -698,7 +907,7 @@
       </div>
 
       <div class="project-card">
-        <div class="project-num">003</div>
+        <div class="project-num">004</div>
         <div class="project-title">Emotion in Motion</div>
         <p class="project-desc">A solo choreography project exploring the spectrum of human emotion through traditional and contemporary Korean movement vocabularies. Performed at the SKKU Arts Festival.</p>
         <div class="project-tags">
@@ -710,7 +919,7 @@
       </div>
 
       <div class="project-card">
-        <div class="project-num">004</div>
+        <div class="project-num">005</div>
         <div class="project-title">Dance × Technology Workshop</div>
         <p class="project-desc">Organized and participated in a workshop series exploring how digital tools and motion capture can enhance dance education and choreographic documentation.</p>
         <div class="project-tags">
@@ -889,7 +1098,206 @@
     <span>Korea Dance · SKKU · Seoul</span>
   </footer>
 
+  <!-- MODAL: Concert Ticket Analyzer -->
+  <div class="modal-overlay" id="researchModal">
+    <div class="modal" role="dialog" aria-modal="true">
+      <button class="modal-close" onclick="closeModal()">✕ Close</button>
+      <div class="modal-tag">Research Project · 2024</div>
+      <h2 class="modal-title">Concert Ticket <em>Analyzer</em></h2>
+
+      <!-- TOC -->
+      <div class="modal-toc">
+        <div class="modal-toc-title">Table of Contents</div>
+        <ol>
+          <li><a href="#ms1">Introduction</a></li>
+          <li><a href="#ms2">Research Background</a></li>
+          <li><a href="#ms3">Research Purpose</a></li>
+          <li><a href="#ms4">Research Questions</a></li>
+          <li><a href="#ms5">Research Method</a></li>
+          <li><a href="#ms6">Survey Questions</a></li>
+          <li><a href="#ms7">Example Data</a></li>
+          <li><a href="#ms8">Expected Results</a></li>
+          <li><a href="#ms9">Conclusion</a></li>
+        </ol>
+      </div>
+
+      <!-- 1. Introduction -->
+      <div class="modal-section" id="ms1">
+        <div class="modal-section-num">01</div>
+        <h3>Introduction</h3>
+        <p>Concerts are one of the most popular forms of entertainment today. Many people purchase concert tickets to enjoy live performances from their favorite artists. However, ticket prices, seating locations, and concert experiences can strongly affect audience satisfaction.</p>
+        <p>This project analyzes concert ticket preferences and purchasing patterns to understand what factors are most important when people buy concert tickets.</p>
+      </div>
+
+      <!-- 2. Research Background -->
+      <div class="modal-section" id="ms2">
+        <div class="modal-section-num">02</div>
+        <h3>Research Background</h3>
+        <p>Recently, concert ticket prices have increased, especially for popular artists and large performances. Some audiences focus on affordable prices, while others prioritize good seats and special experiences.</p>
+        <p>As someone interested in performance and audience experience, I wanted to study how people choose concert tickets and what factors influence their satisfaction.</p>
+      </div>
+
+      <!-- 3. Research Purpose -->
+      <div class="modal-section" id="ms3">
+        <div class="modal-section-num">03</div>
+        <h3>Research Purpose</h3>
+        <p>The purpose of this research is:</p>
+        <ul>
+          <li>To analyze concert ticket purchasing behavior</li>
+          <li>To identify factors that influence ticket satisfaction</li>
+          <li>To compare preferences for price, seating, and concert experience</li>
+        </ul>
+      </div>
+
+      <!-- 4. Research Questions -->
+      <div class="modal-section" id="ms4">
+        <div class="modal-section-num">04</div>
+        <h3>Research Questions</h3>
+        <ol>
+          <li>What factors are most important when purchasing concert tickets?</li>
+          <li>Do people prefer cheaper tickets or better seats?</li>
+          <li>How does ticket price affect satisfaction?</li>
+          <li>How often do people attend concerts?</li>
+        </ol>
+      </div>
+
+      <!-- 5. Research Method -->
+      <div class="modal-section" id="ms5">
+        <div class="modal-section-num">05</div>
+        <h3>Research Method</h3>
+        <p>This study will use an online survey.</p>
+        <p><strong style="color:var(--text); font-weight:400;">Participants</strong></p>
+        <ul>
+          <li>Teenagers and young adults</li>
+          <li>People who have attended concerts before</li>
+          <li>Students interested in music and performances</li>
+        </ul>
+        <p style="margin-top:1rem;"><strong style="color:var(--text); font-weight:400;">Data Collection</strong></p>
+        <p>Responses will be collected through Google Forms.</p>
+        <p><strong style="color:var(--text); font-weight:400;">Analysis Method</strong></p>
+        <ul>
+          <li>Compare ticket preferences</li>
+          <li>Analyze satisfaction scores</li>
+          <li>Compare spending patterns by age group</li>
+        </ul>
+      </div>
+
+      <!-- 6. Survey Questions -->
+      <div class="modal-section" id="ms6">
+        <div class="modal-section-num">06</div>
+        <h3>Survey Questions</h3>
+        <div class="modal-q-block">
+          <div class="q-label">Q1</div>
+          <div class="q-text">What is your age group?</div>
+          <div class="q-opts"><span class="q-opt">Under 20</span><span class="q-opt">20–29</span><span class="q-opt">30 and above</span></div>
+        </div>
+        <div class="modal-q-block">
+          <div class="q-label">Q2</div>
+          <div class="q-text">How often do you attend concerts?</div>
+          <div class="q-opts"><span class="q-opt">Often</span><span class="q-opt">Sometimes</span><span class="q-opt">Rarely</span></div>
+        </div>
+        <div class="modal-q-block">
+          <div class="q-label">Q3</div>
+          <div class="q-text">What is the most important factor when buying tickets?</div>
+          <div class="q-opts"><span class="q-opt">Price</span><span class="q-opt">Seat location</span><span class="q-opt">Artist popularity</span><span class="q-opt">Venue</span><span class="q-opt">Benefits / Merchandise</span></div>
+        </div>
+        <div class="modal-q-block">
+          <div class="q-label">Q4</div>
+          <div class="q-text">How much do you usually spend on concert tickets?</div>
+          <div class="q-opts"><span class="q-opt">Under $50</span><span class="q-opt">$50–100</span><span class="q-opt">Over $100</span></div>
+        </div>
+        <div class="modal-q-block">
+          <div class="q-label">Q5</div>
+          <div class="q-text">Which seating area do you usually prefer?</div>
+          <div class="q-opts"><span class="q-opt">VIP</span><span class="q-opt">Middle seats</span><span class="q-opt">Budget seats</span></div>
+        </div>
+        <div class="modal-q-block">
+          <div class="q-label">Q6</div>
+          <div class="q-text">How satisfied are you with your concert experiences?</div>
+          <div class="q-opts"><span class="q-opt">1</span><span class="q-opt">2</span><span class="q-opt">3</span><span class="q-opt">4</span><span class="q-opt">5</span></div>
+        </div>
+        <div class="modal-q-block">
+          <div class="q-label">Q7</div>
+          <div class="q-text">Would you buy expensive tickets for your favorite artist?</div>
+          <div class="q-opts"><span class="q-opt">Yes</span><span class="q-opt">No</span></div>
+        </div>
+      </div>
+
+      <!-- 7. Example Data -->
+      <div class="modal-section" id="ms7">
+        <div class="modal-section-num">07</div>
+        <h3>Example Data</h3>
+        <div style="overflow-x:auto;">
+          <table class="modal-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Age Group</th>
+                <th>Frequency</th>
+                <th>Seat Preference</th>
+                <th>Avg Spending</th>
+                <th>Satisfaction</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>P1</td><td>20–29</td><td>Often</td><td>VIP</td><td>$120</td>
+                <td><span class="sat-dot" style="background:#c8a97e;"></span> 5 / 5</td>
+              </tr>
+              <tr>
+                <td>P2</td><td>Under 20</td><td>Sometimes</td><td>Budget</td><td>$40</td>
+                <td><span class="sat-dot" style="background:#5a5a70;"></span> 3 / 5</td>
+              </tr>
+              <tr>
+                <td>P3</td><td>30+</td><td>Rarely</td><td>Middle</td><td>$80</td>
+                <td><span class="sat-dot" style="background:#8a8494;"></span> 4 / 5</td>
+              </tr>
+              <tr>
+                <td>P4</td><td>20–29</td><td>Often</td><td>VIP</td><td>$150</td>
+                <td><span class="sat-dot" style="background:#c8a97e;"></span> 5 / 5</td>
+              </tr>
+              <tr>
+                <td>P5</td><td>Under 20</td><td>Rarely</td><td>Budget</td><td>$30</td>
+                <td><span class="sat-dot" style="background:#3a3a48;"></span> 2 / 5</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 8. Expected Results -->
+      <div class="modal-section" id="ms8">
+        <div class="modal-section-num">08</div>
+        <h3>Expected Results</h3>
+        <p>The study may show that younger audiences prefer affordable tickets, while dedicated fans are willing to spend more money for better seats and exclusive experiences.</p>
+        <p>The results may also show that satisfaction is related more to the overall concert experience than to ticket price alone.</p>
+      </div>
+
+      <!-- 9. Conclusion -->
+      <div class="modal-section" id="ms9">
+        <div class="modal-section-num">09</div>
+        <h3>Conclusion</h3>
+        <p>This project analyzes concert ticket purchasing behavior and audience satisfaction. Understanding ticket preferences can help concert organizers improve pricing strategies and audience experiences.</p>
+        <p>The research may also explain how fan culture and artist popularity influence ticket purchasing decisions.</p>
+      </div>
+
+    </div>
+  </div>
+
   <script>
+    function openModal() {
+      document.getElementById('researchModal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeModal() {
+      document.getElementById('researchModal').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    document.getElementById('researchModal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
     // Custom cursor
     const cursor = document.getElementById('cursor');
     const ring = document.getElementById('cursorRing');
