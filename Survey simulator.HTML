@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Concert Ticket Survey Simulator</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f7f5f0;
+  --white:#ffffff;
+  --ink:#0e0d0b;
+  --dim:#8a8780;
+  --line:#e4e0d8;
+  --card:#ffffff;
+  --p1:#ff4d1c;   /* orange-red */
+  --p2:#1a1a2e;   /* deep navy */
+  --p3:#00b37e;   /* teal green */
+  --p4:#f5a623;   /* amber */
+  --shadow:0 2px 20px rgba(14,13,11,.07);
+  --shadow-lg:0 8px 40px rgba(14,13,11,.12);
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'Plus Jakarta Sans',sans-serif;
+  font-weight:400;
+  min-height:100vh;
+}
+ 
+/* ── TOP BAR ── */
+header{
+  background:var(--p2);
+  padding:1rem 2rem;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:50;
+}
+.logo{
+  font-family:'Syne',sans-serif;
+  font-size:1rem;font-weight:800;
+  color:#fff;letter-spacing:.02em;
+}
+.logo span{color:var(--p1);}
+.progress-bar-wrap{
+  flex:1;max-width:300px;margin:0 2rem;
+  background:rgba(255,255,255,.15);
+  height:4px;border-radius:4px;overflow:hidden;
+}
+.progress-bar-fill{
+  height:100%;background:var(--p1);
+  border-radius:4px;
+  transition:width .5s cubic-bezier(.4,0,.2,1);
+  width:0%;
+}
+.progress-label{
+  font-size:.7rem;color:rgba(255,255,255,.6);
+  font-weight:500;white-space:nowrap;
+}
+ 
+/* ── LAYOUT ── */
+.app{
+  display:grid;
+  grid-template-columns:1fr 420px;
+  min-height:calc(100vh - 56px);
+}
+ 
+/* ── LEFT: SURVEY ── */
+.survey-panel{
+  padding:3rem 3rem 3rem 4rem;
+  display:flex;flex-direction:column;
+}
+.survey-eyebrow{
+  font-size:.7rem;font-weight:600;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--p1);
+  margin-bottom:.6rem;
+}
+.survey-heading{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(1.8rem,3.5vw,2.6rem);
+  font-weight:800;line-height:1.1;
+  margin-bottom:.6rem;color:var(--p2);
+}
+.survey-sub{
+  font-size:.9rem;color:var(--dim);
+  margin-bottom:2.5rem;line-height:1.6;
+}
+ 
+/* Steps */
+.steps{display:flex;flex-direction:column;gap:1rem;flex:1;}
+.step{
+  background:var(--card);
+  border:2px solid var(--line);
+  border-radius:16px;
+  padding:1.4rem 1.6rem;
+  transition:border-color .25s,box-shadow .25s,opacity .3s,transform .3s;
+  opacity:.4;
+  transform:translateY(6px);
+}
+.step.active{
+  border-color:var(--p1);
+  box-shadow:var(--shadow-lg);
+  opacity:1;transform:translateY(0);
+}
+.step.done{
+  opacity:.75;transform:translateY(0);
+  border-color:var(--p3);
+}
+.step.done .step-q-label{color:var(--p3);}
+.step-q-label{
+  font-size:.65rem;font-weight:700;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--p1);
+  margin-bottom:.5rem;
+}
+.step-q-text{
+  font-size:1rem;font-weight:600;color:var(--p2);
+  margin-bottom:1rem;line-height:1.4;
+}
+.step.done .step-q-text::after{
+  content:' ✓';color:var(--p3);
+}
+.opts{display:flex;flex-wrap:wrap;gap:.5rem;}
+.opt-btn{
+  background:var(--bg);
+  border:1.5px solid var(--line);
+  border-radius:8px;
+  padding:.45rem 1rem;
+  font-size:.82rem;font-weight:500;
+  color:var(--ink);cursor:pointer;
+  transition:all .2s;
+  font-family:'Plus Jakarta Sans',sans-serif;
+}
+.opt-btn:hover{border-color:var(--p1);color:var(--p1);background:#fff5f2;}
+.opt-btn.selected{
+  background:var(--p1);border-color:var(--p1);
+  color:#fff;
+}
+/* Scale buttons */
+.opt-btn.scale-btn{
+  width:44px;height:44px;padding:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.95rem;font-weight:700;border-radius:50%;
+}
+.opt-btn.scale-btn.selected{background:var(--p2);border-color:var(--p2);}
+ 
+/* CTA */
+.cta-row{margin-top:2rem;display:flex;align-items:center;gap:1rem;}
+.btn-submit{
+  background:var(--p2);color:#fff;
+  border:none;border-radius:10px;
+  padding:.85rem 2rem;
+  font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:.9rem;font-weight:700;
+  cursor:pointer;
+  transition:background .2s,transform .2s;
+  display:none;
+}
+.btn-submit:hover{background:var(--p1);transform:translateY(-1px);}
+.btn-submit.visible{display:block;}
+.btn-reset{
+  background:none;border:1.5px solid var(--line);
+  border-radius:10px;padding:.85rem 1.4rem;
+  font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:.82rem;font-weight:600;color:var(--dim);
+  cursor:pointer;transition:all .2s;display:none;
+}
+.btn-reset:hover{border-color:var(--ink);color:var(--ink);}
+.btn-reset.visible{display:block;}
+ 
+/* ── RIGHT: DASHBOARD ── */
+.dash-panel{
+  background:var(--p2);
+  padding:2.5rem 2rem;
+  display:flex;flex-direction:column;gap:1.6rem;
+  overflow-y:auto;
+  max-height:calc(100vh - 56px);
+  position:sticky;top:56px;
+}
+.dash-title{
+  font-family:'Syne',sans-serif;
+  font-size:1.1rem;font-weight:800;
+  color:#fff;
+}
+.dash-title span{color:var(--p1);}
+ 
+/* Stat cards row */
+.stat-row{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;}
+.stat-card{
+  background:rgba(255,255,255,.07);
+  border-radius:12px;padding:1rem 1.2rem;
+  border:1px solid rgba(255,255,255,.1);
+}
+.stat-val{
+  font-family:'Syne',sans-serif;
+  font-size:1.8rem;font-weight:800;
+  color:#fff;line-height:1;
+}
+.stat-val.green{color:var(--p3);}
+.stat-val.amber{color:var(--p4);}
+.stat-val.red{color:var(--p1);}
+.stat-lbl{
+  font-size:.62rem;font-weight:600;letter-spacing:.12em;
+  text-transform:uppercase;color:rgba(255,255,255,.45);
+  margin-top:.3rem;
+}
+ 
+/* Chart blocks */
+.chart-block{
+  background:rgba(255,255,255,.05);
+  border-radius:14px;padding:1.2rem 1.4rem;
+  border:1px solid rgba(255,255,255,.08);
+}
+.chart-title{
+  font-size:.68rem;font-weight:700;letter-spacing:.15em;
+  text-transform:uppercase;color:rgba(255,255,255,.5);
+  margin-bottom:1rem;
+}
+ 
+/* Bar chart */
+.bar-chart{display:flex;flex-direction:column;gap:.55rem;}
+.bar-row{display:flex;align-items:center;gap:.7rem;}
+.bar-label{
+  font-size:.72rem;font-weight:600;color:rgba(255,255,255,.7);
+  width:70px;flex-shrink:0;text-align:right;
+}
+.bar-track{
+  flex:1;height:22px;background:rgba(255,255,255,.08);
+  border-radius:6px;overflow:hidden;position:relative;
+}
+.bar-fill{
+  height:100%;border-radius:6px;
+  transition:width .6s cubic-bezier(.4,0,.2,1);
+  display:flex;align-items:center;justify-content:flex-end;
+  padding-right:.4rem;
+  min-width:28px;
+}
+.bar-fill span{
+  font-size:.65rem;font-weight:700;color:#fff;
+}
+ 
+/* Donut */
+.donut-wrap{display:flex;align-items:center;gap:1.2rem;}
+.donut-svg{flex-shrink:0;}
+.donut-legend{display:flex;flex-direction:column;gap:.5rem;}
+.legend-item{display:flex;align-items:center;gap:.5rem;}
+.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.legend-text{font-size:.72rem;color:rgba(255,255,255,.7);font-weight:500;}
+ 
+/* Satisfaction meter */
+.sat-meter{display:flex;flex-direction:column;gap:.4rem;}
+.sat-row{display:flex;align-items:center;gap:.7rem;}
+.sat-label{font-size:.7rem;color:rgba(255,255,255,.6);width:20px;text-align:center;font-weight:700;}
+.sat-pips{display:flex;gap:3px;flex:1;}
+.sat-pip{width:100%;height:14px;border-radius:3px;background:rgba(255,255,255,.1);transition:background .4s;}
+.sat-pip.lit{background:var(--p4);}
+ 
+/* Result card */
+.result-card{
+  background:linear-gradient(135deg,var(--p1),#ff7a1a);
+  border-radius:14px;padding:1.5rem;
+  display:none;
+}
+.result-card.show{display:block;}
+.result-card-title{
+  font-family:'Syne',sans-serif;
+  font-size:.75rem;font-weight:800;letter-spacing:.12em;
+  text-transform:uppercase;color:rgba(255,255,255,.75);
+  margin-bottom:.5rem;
+}
+.result-type{
+  font-family:'Syne',sans-serif;
+  font-size:1.4rem;font-weight:800;color:#fff;
+  margin-bottom:.5rem;line-height:1.2;
+}
+.result-desc{font-size:.8rem;color:rgba(255,255,255,.85);line-height:1.6;}
+ 
+/* Insight ticker */
+.insight-strip{
+  background:rgba(255,255,255,.06);
+  border-radius:10px;padding:.9rem 1.2rem;
+  border-left:3px solid var(--p3);
+}
+.insight-label{
+  font-size:.6rem;font-weight:700;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--p3);margin-bottom:.3rem;
+}
+.insight-text{font-size:.8rem;color:rgba(255,255,255,.75);line-height:1.6;}
+ 
+/* ── RESPONSIVE ── */
+@media(max-width:860px){
+  .app{grid-template-columns:1fr;grid-template-rows:auto auto;}
+  .dash-panel{position:static;max-height:none;}
+  .survey-panel{padding:2rem 1.2rem;}
+}
+</style>
+</head>
+<body>
+ 
+<header>
+  <div class="logo">Concert<span>.</span>Survey</div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progressFill"></div>
+  </div>
+  <div class="progress-label" id="progressLabel">0 / 7 완료</div>
+</header>
+ 
+<div class="app">
+ 
+  <!-- ── LEFT ── -->
+  <div class="survey-panel">
+    <div class="survey-eyebrow">Concert Ticket Analyzer · Survey Simulator</div>
+    <h1 class="survey-heading">당신은 어떤<br>콘서트 관객인가요?</h1>
+    <p class="survey-sub">7개 질문에 답하면 — 기존 참여자 5명 데이터와 합쳐져 결과가 실시간으로 업데이트됩니다.</p>
+ 
+    <div class="steps" id="stepsContainer"></div>
+ 
+    <div class="cta-row">
+      <button class="btn-submit" id="btnSubmit" onclick="submitSurvey()">결과 보기 →</button>
+      <button class="btn-reset" id="btnReset" onclick="resetSurvey()">다시하기</button>
+    </div>
+  </div>
+ 
+  <!-- ── RIGHT ── -->
+  <div class="dash-panel">
+    <div class="dash-title">Live <span>Results</span></div>
+ 
+    <!-- Stats -->
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-val" id="statTotal">5</div>
+        <div class="stat-lbl">총 참여자</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val green" id="statAvgSat">3.8</div>
+        <div class="stat-lbl">평균 만족도</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val amber" id="statAvgSpend">$84</div>
+        <div class="stat-lbl">평균 지출</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val red" id="statVipPct">40%</div>
+        <div class="stat-lbl">VIP 선호율</div>
+      </div>
+    </div>
+ 
+    <!-- Seat preference donut -->
+    <div class="chart-block">
+      <div class="chart-title">좌석 선호도</div>
+      <div class="donut-wrap">
+        <svg class="donut-svg" width="80" height="80" viewBox="0 0 80 80" id="donutSvg">
+          <circle cx="40" cy="40" r="28" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="14"/>
+          <circle cx="40" cy="40" r="28" fill="none" id="donutVip"
+            stroke="#ff4d1c" stroke-width="14"
+            stroke-dasharray="175.9" stroke-dashoffset="175.9"
+            stroke-linecap="butt"
+            transform="rotate(-90 40 40)"
+            style="transition:stroke-dashoffset .6s ease"/>
+          <circle cx="40" cy="40" r="28" fill="none" id="donutMid"
+            stroke="#f5a623" stroke-width="14"
+            stroke-dasharray="175.9" stroke-dashoffset="175.9"
+            stroke-linecap="butt"
+            transform="rotate(-90 40 40)"
+            style="transition:stroke-dashoffset .6s ease,stroke-dasharray .6s ease"/>
+          <circle cx="40" cy="40" r="28" fill="none" id="donutBud"
+            stroke="#00b37e" stroke-width="14"
+            stroke-dasharray="175.9" stroke-dashoffset="175.9"
+            stroke-linecap="butt"
+            transform="rotate(-90 40 40)"
+            style="transition:stroke-dashoffset .6s ease,stroke-dasharray .6s ease"/>
+        </svg>
+        <div class="donut-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:#ff4d1c"></div><div class="legend-text" id="legVip">VIP — 2명 (40%)</div></div>
+          <div class="legend-item"><div class="legend-dot" style="background:#f5a623"></div><div class="legend-text" id="legMid">Middle — 1명 (20%)</div></div>
+          <div class="legend-item"><div class="legend-dot" style="background:#00b37e"></div><div class="legend-text" id="legBud">Budget — 2명 (40%)</div></div>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- Spend bar chart -->
+    <div class="chart-block">
+      <div class="chart-title">연령대별 평균 지출</div>
+      <div class="bar-chart">
+        <div class="bar-row">
+          <div class="bar-label">20대</div>
+          <div class="bar-track"><div class="bar-fill" id="barAge20" style="width:85%;background:#ff4d1c"><span>$135</span></div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">30대+</div>
+          <div class="bar-track"><div class="bar-fill" id="barAge30" style="width:53%;background:#f5a623"><span>$80</span></div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">10대</div>
+          <div class="bar-track"><div class="bar-fill" id="barAge10" style="width:23%;background:#00b37e"><span>$35</span></div></div>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- Satisfaction by seat -->
+    <div class="chart-block">
+      <div class="chart-title">좌석 유형별 만족도</div>
+      <div class="sat-meter" id="satMeter">
+        <div class="sat-row">
+          <div class="sat-label" style="color:#ff4d1c;">VIP</div>
+          <div class="sat-pips" id="satVip"></div>
+        </div>
+        <div class="sat-row">
+          <div class="sat-label" style="color:#f5a623;">MID</div>
+          <div class="sat-pips" id="satMid"></div>
+        </div>
+        <div class="sat-row">
+          <div class="sat-label" style="color:#00b37e;">BUD</div>
+          <div class="sat-pips" id="satBud"></div>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- Result card (hidden until submit) -->
+    <div class="result-card" id="resultCard">
+      <div class="result-card-title">당신의 관객 유형</div>
+      <div class="result-type" id="resultType">—</div>
+      <div class="result-desc" id="resultDesc">—</div>
+    </div>
+ 
+    <!-- Insight -->
+    <div class="insight-strip">
+      <div class="insight-label">Live Insight</div>
+      <div class="insight-text" id="insightText">아직 설문 참여 전입니다. 답변할수록 인사이트가 업데이트됩니다.</div>
+    </div>
+ 
+  </div>
+</div>
+ 
+<script>
+// ── BASE DATA (5 participants) ──
+const BASE = [
+  {age:'20s', freq:'often',  seat:'vip',    spend:120, sat:5, expArtist:true},
+  {age:'teen',freq:'sometimes',seat:'budget',spend:40, sat:3, expArtist:false},
+  {age:'30s', freq:'rarely', seat:'middle', spend:80,  sat:4, expArtist:true},
+  {age:'20s', freq:'often',  seat:'vip',    spend:150, sat:5, expArtist:true},
+  {age:'teen',freq:'rarely', seat:'budget', spend:30,  sat:2, expArtist:false},
+];
+ 
+// ── QUESTIONS ──
+const QUESTIONS = [
+  {
+    id:'age', label:'Q1', text:'연령대가 어떻게 되세요?',
+    opts:[{v:'teen',l:'10대 (Under 20)'},{v:'20s',l:'20대 (20–29)'},{v:'30s',l:'30대 이상 (30+)'}],
+    type:'normal'
+  },
+  {
+    id:'freq', label:'Q2', text:'콘서트에 얼마나 자주 가세요?',
+    opts:[{v:'often',l:'자주 간다'},{v:'sometimes',l:'가끔 간다'},{v:'rarely',l:'거의 안 간다'}],
+    type:'normal'
+  },
+  {
+    id:'factor', label:'Q3', text:'티켓 구매 시 가장 중요한 요소는?',
+    opts:[{v:'price',l:'가격'},{v:'seat',l:'좌석 위치'},{v:'artist',l:'아티스트'},{v:'venue',l:'공연장'},{v:'merch',l:'굿즈/혜택'}],
+    type:'normal'
+  },
+  {
+    id:'spend', label:'Q4', text:'보통 콘서트 티켓에 얼마를 쓰세요?',
+    opts:[{v:'low',l:'$50 미만'},{v:'mid',l:'$50–$100'},{v:'high',l:'$100 이상'}],
+    type:'normal'
+  },
+  {
+    id:'seat', label:'Q5', text:'선호하는 좌석 구역은?',
+    opts:[{v:'vip',l:'VIP'},{v:'middle',l:'중간 좌석'},{v:'budget',l:'저가 좌석'}],
+    type:'normal'
+  },
+  {
+    id:'sat', label:'Q6', text:'콘서트 경험에 얼마나 만족하세요?',
+    opts:[{v:1,l:'1'},{v:2,l:'2'},{v:3,l:'3'},{v:4,l:'4'},{v:5,l:'5'}],
+    type:'scale'
+  },
+  {
+    id:'expArtist', label:'Q7', text:'좋아하는 아티스트라면 비싼 티켓도 사겠어요?',
+    opts:[{v:true,l:'Yes — 무조건'},{v:false,l:'No — 가격이 중요해'}],
+    type:'normal'
+  },
+];
+ 
+const answers = {};
+let submitted = false;
+ 
+// ── BUILD STEPS ──
+function buildSteps(){
+  const container = document.getElementById('stepsContainer');
+  container.innerHTML='';
+  QUESTIONS.forEach((q,i)=>{
+    const step = document.createElement('div');
+    step.className='step'+(i===0?' active':'');
+    step.id='step'+i;
+    const isScale = q.type==='scale';
+    step.innerHTML=`
+      <div class="step-q-label">${q.label} / 7</div>
+      <div class="step-q-text">${q.text}</div>
+      <div class="opts" id="opts${i}">
+        ${q.opts.map(o=>`
+          <button class="opt-btn${isScale?' scale-btn':''}" data-qidx="${i}" data-val="${o.v}" onclick="pick(this,${i},'${o.v}')">
+            ${o.l}
+          </button>`).join('')}
+      </div>`;
+    container.appendChild(step);
+  });
+}
+ 
+function pick(btn, qIdx, val){
+  if(submitted) return;
+  const q = QUESTIONS[qIdx];
+  // deselect siblings
+  document.querySelectorAll(`#opts${qIdx} .opt-btn`).forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  // parse value
+  let parsed = val;
+  if(val==='true') parsed=true;
+  else if(val==='false') parsed=false;
+  else if(!isNaN(val)) parsed=Number(val);
+  answers[q.id]=parsed;
+ 
+  // mark done, activate next
+  const curStep = document.getElementById('step'+qIdx);
+  curStep.classList.remove('active');
+  curStep.classList.add('done');
+  const next = document.getElementById('step'+(qIdx+1));
+  if(next){ next.classList.add('active'); next.scrollIntoView({behavior:'smooth',block:'nearest'}); }
+ 
+  updateProgress();
+  updateDash();
+  checkSubmit();
+}
+ 
+function updateProgress(){
+  const done = Object.keys(answers).length;
+  const pct = (done/7)*100;
+  document.getElementById('progressFill').style.width=pct+'%';
+  document.getElementById('progressLabel').textContent=done+' / 7 완료';
+}
+ 
+function checkSubmit(){
+  const done = Object.keys(answers).length===7;
+  document.getElementById('btnSubmit').classList.toggle('visible', done);
+  document.getElementById('btnReset').classList.toggle('visible', done);
+}
+ 
+// ── LIVE DASH UPDATE ──
+function computeStats(pool){
+  const n=pool.length;
+  const avgSat=(pool.reduce((a,p)=>a+(p.sat||0),0)/n).toFixed(1);
+  const spendMap={low:35,mid:75,high:135};
+  const spendVals=pool.map(p=>p.spend||(spendMap[p.spendBucket]||75));
+  const avgSpend=Math.round(spendVals.reduce((a,b)=>a+b,0)/n);
+  const vipCount=pool.filter(p=>p.seat==='vip').length;
+  const vipPct=Math.round(vipCount/n*100);
+  return{n,avgSat,avgSpend,vipPct};
+}
+ 
+function updateDash(){
+  const pool=[...BASE];
+  // add partial user
+  const u={};
+  if(answers.age) u.age=answers.age;
+  if(answers.seat) u.seat=answers.seat;
+  if(answers.sat) u.sat=answers.sat;
+  if(answers.spend) u.spendBucket=answers.spend;
+  if(Object.keys(u).length>0) pool.push(u);
+ 
+  const {n,avgSat,avgSpend,vipPct}=computeStats(pool);
+  document.getElementById('statTotal').textContent=n;
+  document.getElementById('statAvgSat').textContent=avgSat;
+  document.getElementById('statAvgSpend').textContent='$'+avgSpend;
+  document.getElementById('statVipPct').textContent=vipPct+'%';
+ 
+  // seat donut
+  const vipN=pool.filter(p=>p.seat==='vip').length;
+  const midN=pool.filter(p=>p.seat==='middle').length;
+  const budN=pool.filter(p=>p.seat==='budget').length;
+  const total=vipN+midN+budN||1;
+  const C=175.9;
+  const vipDash=C*(vipN/total);
+  const midDash=C*(midN/total);
+  const budDash=C*(budN/total);
+  // VIP arc
+  document.getElementById('donutVip').setAttribute('stroke-dasharray',vipDash+' '+(C-vipDash));
+  document.getElementById('donutVip').setAttribute('stroke-dashoffset','0');
+  // Mid arc (offset by vip)
+  document.getElementById('donutMid').setAttribute('stroke-dasharray',midDash+' '+(C-midDash));
+  document.getElementById('donutMid').setAttribute('stroke-dashoffset',(-vipDash).toString());
+  // Bud arc
+  document.getElementById('donutBud').setAttribute('stroke-dasharray',budDash+' '+(C-budDash));
+  document.getElementById('donutBud').setAttribute('stroke-dashoffset',(-(vipDash+midDash)).toString());
+  document.getElementById('legVip').textContent=`VIP — ${vipN}명 (${Math.round(vipN/total*100)}%)`;
+  document.getElementById('legMid').textContent=`Middle — ${midN}명 (${Math.round(midN/total*100)}%)`;
+  document.getElementById('legBud').textContent=`Budget — ${budN}명 (${Math.round(budN/total*100)}%)`;
+ 
+  // age spend bars
+  const ageGroups=[
+    {key:'20s',id:'barAge20',color:'#ff4d1c'},
+    {key:'30s',id:'barAge30',color:'#f5a623'},
+    {key:'teen',id:'barAge10',color:'#00b37e'},
+  ];
+  const spendMap={low:35,mid:75,high:135};
+  ageGroups.forEach(ag=>{
+    const members=pool.filter(p=>p.age===ag.key);
+    if(members.length===0) return;
+    const avg=Math.round(members.reduce((a,p)=>a+(p.spend||(spendMap[p.spendBucket]||75)),0)/members.length);
+    const pct=Math.min(100,Math.round(avg/160*100));
+    const el=document.getElementById(ag.id);
+    el.style.width=pct+'%';
+    el.style.background=ag.color;
+    el.innerHTML=`<span>$${avg}</span>`;
+  });
+ 
+  // sat pips
+  const seats=['vip','middle','budget'];
+  const ids=['satVip','satMid','satBud'];
+  seats.forEach((s,i)=>{
+    const members=pool.filter(p=>p.seat===s&&p.sat);
+    const avg=members.length?members.reduce((a,p)=>a+p.sat,0)/members.length:0;
+    const el=document.getElementById(ids[i]);
+    el.innerHTML='';
+    for(let k=1;k<=5;k++){
+      const pip=document.createElement('div');
+      pip.className='sat-pip'+(k<=Math.round(avg)?' lit':'');
+      el.appendChild(pip);
+    }
+  });
+ 
+  // insight
+  updateInsight(pool, answers);
+}
+ 
+function updateInsight(pool, ans){
+  const insightEl=document.getElementById('insightText');
+  const done=Object.keys(ans).length;
+  if(done===0){insightEl.textContent='아직 설문 참여 전입니다. 답변할수록 인사이트가 업데이트됩니다.';return;}
+  if(ans.seat==='vip'&&ans.spend==='high') insightEl.textContent='VIP + 고지출 조합입니다. 현재 샘플에서 이 조합의 평균 만족도는 5.0 — 가장 높은 그룹입니다.';
+  else if(ans.seat==='budget'&&ans.spend==='low') insightEl.textContent='저가 좌석 + 낮은 지출 패턴입니다. 현재 데이터에서 이 그룹의 평균 만족도는 2.5로, 기대치 조정이 만족도에 영향을 미칠 수 있습니다.';
+  else if(ans.factor==='artist') insightEl.textContent='아티스트를 가장 중요하게 생각하는 관객은 팬 문화 연구에서 "충성 소비자" 유형으로 분류됩니다. 가격 저항이 낮은 경향이 있습니다.';
+  else if(ans.freq==='often') insightEl.textContent='콘서트를 자주 가는 관객은 경험이 쌓이면서 가격 대비 가치 판단이 더 정교해지는 경향을 보입니다.';
+  else if(done>=4) insightEl.textContent='7개 중 '+done+'개 완료. 설문을 마치면 당신의 관객 유형이 분석됩니다!';
+  else insightEl.textContent=done+'개 답변 완료. 계속 답변해주세요 →';
+}
+ 
+// ── SUBMIT ──
+function submitSurvey(){
+  if(Object.keys(answers).length<7) return;
+  submitted=true;
+  document.getElementById('btnSubmit').textContent='✓ 제출 완료';
+  document.getElementById('btnSubmit').style.background='var(--p3)';
+ 
+  // full pool
+  const spendMap={low:35,mid:75,high:135};
+  const me={
+    age:answers.age, freq:answers.freq, seat:answers.seat,
+    spend:spendMap[answers.spend]||75, sat:answers.sat,
+    expArtist:answers.expArtist
+  };
+  const pool=[...BASE, me];
+ 
+  // stats
+  const {n,avgSat,avgSpend,vipPct}=computeStats(pool);
+  document.getElementById('statTotal').textContent=n;
+  document.getElementById('statAvgSat').textContent=avgSat;
+  document.getElementById('statAvgSpend').textContent='$'+avgSpend;
+  document.getElementById('statVipPct').textContent=vipPct+'%';
+ 
+  // result type
+  const rc=document.getElementById('resultCard');
+  const rt=document.getElementById('resultType');
+  const rd=document.getElementById('resultDesc');
+  rc.classList.add('show');
+  let type='', desc='';
+  if(answers.seat==='vip'&&answers.expArtist===true){
+    type='💎 헌신적 팬'; desc='아티스트에 대한 충성도가 높고 최고의 경험을 위해 기꺼이 투자하는 유형입니다. Pine & Gilmore의 경험 경제 이론에서 가장 높은 가치를 추구하는 관객군입니다.';
+  } else if(answers.seat==='budget'&&answers.spend==='low'){
+    type='🎵 캐주얼 리스너'; desc='분위기와 음악 자체를 즐기는 유형입니다. 높은 기대치보다 낮은 기대치가 오히려 만족도를 높이는 "기대치 효과"를 경험할 가능성이 있습니다.';
+  } else if(answers.factor==='artist'){
+    type='🌟 아티스트 중심형'; desc='티켓 구매의 핵심 동기가 아티스트입니다. 연구 가설 C와 일치 — 아티스트 인기가 가격·좌석보다 강한 구매 동인으로 작용하는 유형입니다.';
+  } else if(answers.freq==='often'){
+    type='🎤 콘서트 매니아'; desc='반복 경험을 통해 콘서트 소비 패턴이 정교해진 유형입니다. 가격 대비 가치 판단이 빠르고, 중간 좌석의 가성비를 잘 활용하는 경향을 보입니다.';
+  } else {
+    type='🎶 균형 추구형'; desc='가격, 좌석, 경험을 균형 있게 고려하는 합리적 관객 유형입니다. 데이터에서 중간 지출 + 중간 만족도 그룹에 해당합니다.';
+  }
+  rt.textContent=type;
+  rd.textContent=desc;
+  document.getElementById('insightText').textContent='제출 완료! 총 '+n+'명의 데이터가 반영되었습니다. 당신의 응답이 모든 차트에 실시간으로 업데이트되었습니다.';
+ 
+  // disable all opts
+  document.querySelectorAll('.opt-btn').forEach(b=>b.style.pointerEvents='none');
+}
+ 
+// ── RESET ──
+function resetSurvey(){
+  Object.keys(answers).forEach(k=>delete answers[k]);
+  submitted=false;
+  buildSteps();
+  document.getElementById('progressFill').style.width='0%';
+  document.getElementById('progressLabel').textContent='0 / 7 완료';
+  document.getElementById('btnSubmit').classList.remove('visible');
+  document.getElementById('btnSubmit').textContent='결과 보기 →';
+  document.getElementById('btnSubmit').style.background='';
+  document.getElementById('btnReset').classList.remove('visible');
+  document.getElementById('resultCard').classList.remove('show');
+  updateDash();
+}
+ 
+// ── INIT ──
+buildSteps();
+updateDash();
+</script>
+</body>
+</html>
